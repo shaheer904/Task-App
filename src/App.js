@@ -55,15 +55,12 @@ class App extends React.Component {
     ) {
       return
     }
-
-    const good = this.state.columnOrder.findIndex(
+    const value1 = this.state.columnOrder.findIndex(
       (e) => e === source.droppableId
     )
-    console.log(good)
-    const good123 = this.state.columnOrder.findIndex(
+    const value2 = this.state.columnOrder.findIndex(
       (e) => e === destination.droppableId
     )
-    console.log(good123)
 
     if (type === 'column') {
       const newColumnOrder = Array.from(this.state.columnOrder)
@@ -80,7 +77,6 @@ class App extends React.Component {
 
     const home = this.state.columns[source.droppableId]
     const foreign = this.state.columns[destination.droppableId]
-    console.log('>>>>>', result.draggableId)
 
     if (home === foreign) {
       const newTaskIds = Array.from(home.taskIds)
@@ -104,8 +100,6 @@ class App extends React.Component {
 
       return
     }
-    console.log(result)
-
     const left = this.state.tasks[result.draggableId].position.find(
       (e) => e === 'left'
     )
@@ -113,8 +107,7 @@ class App extends React.Component {
       (e) => e === 'right'
     )
 
-    console.log(left)
-    if (right === 'right' && good < good123) {
+    if (right === 'right' && value1 < value2) {
       // moving from one list to another
       const homeTaskIds = Array.from(home.taskIds)
       homeTaskIds.splice(source.index, 1)
@@ -140,7 +133,7 @@ class App extends React.Component {
       }
       this.setState(newState)
     }
-    if (left === 'left' && good > good123) {
+    if (left === 'left' && value1 > value2) {
       // moving from one list to another
       const homeTaskIds = Array.from(home.taskIds)
       homeTaskIds.splice(source.index, 1)
