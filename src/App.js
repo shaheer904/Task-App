@@ -106,9 +106,41 @@ class App extends React.Component {
     }
     console.log(result)
 
-    const side = this.state.tasks[result.draggableId].position
-    console.log(side)
-    if (side === 'right' && good < good123) {
+    const left = this.state.tasks[result.draggableId].position.find(
+      (e) => e === 'left'
+    )
+    const right = this.state.tasks[result.draggableId].position.find(
+      (e) => e === 'right'
+    )
+
+    console.log(left)
+    if (right === 'right' && good < good123) {
+      // moving from one list to another
+      const homeTaskIds = Array.from(home.taskIds)
+      homeTaskIds.splice(source.index, 1)
+      const newHome = {
+        ...home,
+        taskIds: homeTaskIds,
+      }
+
+      const foreignTaskIds = Array.from(foreign.taskIds)
+      foreignTaskIds.splice(destination.index, 0, draggableId)
+      const newForeign = {
+        ...foreign,
+        taskIds: foreignTaskIds,
+      }
+
+      const newState = {
+        ...this.state,
+        columns: {
+          ...this.state.columns,
+          [newHome.id]: newHome,
+          [newForeign.id]: newForeign,
+        },
+      }
+      this.setState(newState)
+    }
+    if (left === 'left' && good > good123) {
       // moving from one list to another
       const homeTaskIds = Array.from(home.taskIds)
       homeTaskIds.splice(source.index, 1)
