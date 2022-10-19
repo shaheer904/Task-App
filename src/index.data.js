@@ -8,7 +8,7 @@ const initialData = {
     'task-2': {
       id: 'task-2',
       content: 'Watch my favorite show',
-      position: ['right'],
+      position: ['left'],
     },
     'task-3': { id: 'task-3', content: 'Charge my phone', position: ['right'] },
     'task-4': {
