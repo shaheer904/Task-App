@@ -22,6 +22,7 @@ export default class Task extends React.Component {
             isDragging={snapshot.isDragging}
           >
             {this.props.task.content}
+            <p>{this.props.task.position.join(',')}</p>
           </Container>
         )}
       </Draggable>
