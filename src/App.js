@@ -105,7 +105,7 @@ class App extends React.Component {
       const newState = {
         ...this.state.initialData,
         columns: {
-          ...this.state.columns,
+          ...this.state.initialData.columns,
           [newHome.id]: newHome,
         },
       }
@@ -185,17 +185,17 @@ class App extends React.Component {
     return colName
   }
   addColumn = () => {
-    console.log('okay', this.state.initialData.columns)
+    // console.log('okay', this.state.initialData.columns)
     let { columns } = this.state.initialData
     //Find the column object last object number
     const lastIndexNum = Object.keys(columns).length - 1
-    console.log(lastIndexNum)
+    // console.log(lastIndexNum)
     //Get the last object key value
     const lastColName = Object.keys(columns)[lastIndexNum]
-    console.log(lastColName)
+    // console.log(lastColName)
     //create the new column key name
     const newCol = this.retnum(lastColName)
-    console.log(newCol)
+    // console.log(newCol)
     //new column object
     const newColObject = Object.assign(columns, {
       [newCol]: { id: newCol, title: this.state.title, taskIds: [] },
@@ -207,12 +207,12 @@ class App extends React.Component {
       columnOrder: [...this.state.initialData.columnOrder, newCol],
       columns: {
         ...this.state.initialData.columns,
-        newColObject,
+        [newCol]: { id: newCol, title: this.state.title, taskIds: [] },
       },
     }
 
     this.setState({ initialData: newState, open: false, title: '' })
-    console.log('okay12', this.state.initialData.columns)
+    console.log(newState, 'okay12', this.state.initialData)
   }
 
   handleText = (e) => {
@@ -222,6 +222,7 @@ class App extends React.Component {
   render() {
     return (
       <>
+        {console.log('12345', this.state.initialData)}
         <Button onClick={this.handleOpen} variant='contained'>
           Add New Column
         </Button>
