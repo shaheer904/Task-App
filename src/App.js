@@ -32,6 +32,7 @@ class InnerList extends React.PureComponent {
         tasks={tasks}
         index={index}
         setData={this.handlegood.bind(this)}
+        addTask={this.props.addTask}
       />
     )
   }
@@ -193,11 +194,19 @@ class App extends React.Component {
 
   handleClose = () => this.setState({ open: false })
 
-  retnum(str) {
+  retnum(str, type) {
     const num = str.replace(/[^0-9]/g, '')
     const number = parseInt(num, 10) + 1
-    const colName = `column-${number}`
-    return colName
+    if (type === 'column') {
+      const colName = `column-${number}`
+
+      return colName
+    }
+    if (type === 'task') {
+      const task = `task-${number}`
+
+      return task
+    }
   }
 
   //To aad a new column
@@ -208,7 +217,7 @@ class App extends React.Component {
     //Get the last object key value
     const lastColName = Object.keys(columns)[lastIndexNum]
     //create the new column key name
-    const newCol = this.retnum(lastColName)
+    const newCol = this.retnum(lastColName, 'column')
 
     const newState = {
       ...this.state.initialData,
@@ -236,14 +245,38 @@ class App extends React.Component {
     })
   }
 
+  //Add a new task
+  addNewTask = (colId, text) => {
+    let { tasks } = this.state.initialData
+    //Find the column object last object number
+    const lastIndexNum = Object.keys(tasks).length - 1
+    //Get the last object key value
+    const lastColName = Object.keys(tasks)[lastIndexNum]
+    //create the new task key name
+    const newTask = this.retnum(lastColName, 'task')
+    const newIds = [...this.state.initialData.columns[colId].taskIds, newTask]
+    let newColData = { ...this.state.initialData.columns }
+
+    newColData[colId].taskIds = newIds
+    const newData = {
+      ...this.state.initialData,
+      columns: newColData,
+      tasks: {
+        ...this.state.initialData.tasks,
+        [newTask]: { id: newTask, content: text },
+      },
+    }
+    this.setState({
+      ...this.state.initialData,
+      initialData: newData,
+    })
+  }
+
   render() {
     return (
       <>
         {console.log('12345', this.state.initialData)}
-        <Button
-          onClick={() => this.updateTask('as', 'asdf')}
-          variant='contained'
-        >
+        <Button onClick={this.newTask} variant='contained'>
           Add New Column
         </Button>
 
@@ -291,6 +324,7 @@ class App extends React.Component {
                       taskMap={this.state.initialData.tasks}
                       index={index}
                       setData={this.updateTask.bind(this)}
+                      addTask={this.addNewTask.bind(this)}
                     />
                   )
                 })}

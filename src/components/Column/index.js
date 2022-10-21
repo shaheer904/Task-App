@@ -2,6 +2,19 @@ import React from 'react'
 import styled from 'styled-components'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Task from '../Task/index'
+import { Button, Modal, Box, TextField } from '@mui/material'
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
 
 const Container = styled.div`
   margin: 8px;
@@ -43,9 +56,18 @@ class InnerList extends React.Component {
   }
 }
 export default class Column extends React.Component {
-  handleupdate = (taskId, data) => {
-    console.log('column', taskId, data)
-    this.props.setData(taskId, data)
+  state = { open: false, content: '' }
+
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+  handleNewTaskChange = (e) => {
+    this.setState({ content: e.target.value })
+  }
+
+  saveData = () => {
+    this.props.addTask(this.props.column.id, this.state.content)
+    this.setState({ open: false })
   }
   render() {
     return (
@@ -56,6 +78,37 @@ export default class Column extends React.Component {
               <Title {...provided.dragHandleProps}>
                 {this.props.column.title}
               </Title>
+              <div style={{ textAlign: 'center' }}>
+                <Button
+                  variant='outlined'
+                  onClick={() => this.setState({ open: true })}
+                >
+                  Add Task
+                </Button>
+              </div>
+              <Modal
+                open={this.state.open}
+                onClose={this.handleClose}
+                aria-labelledby='modal-modal-title'
+                aria-describedby='modal-modal-description'
+              >
+                <Box sx={style}>
+                  <div>
+                    <TextField
+                      id='outlined-basic'
+                      label='Enter task content'
+                      variant='outlined'
+                      value={this.state.content}
+                      onChange={this.handleNewTaskChange}
+                    />
+                  </div>
+                  <div>
+                    <Button onClick={() => this.saveData()} variant='outlined'>
+                      save
+                    </Button>
+                  </div>
+                </Box>
+              </Modal>
               <Droppable droppableId={this.props.column.id} type='task'>
                 {(provided, snapshot) => (
                   <TaskList
@@ -68,7 +121,7 @@ export default class Column extends React.Component {
                     ))} */}
                     <InnerList
                       tasks={this.props.tasks}
-                      setData={this.handleupdate.bind(this)}
+                      setData={this.props.setData}
                     />
                     {provided.placeholder}
                   </TaskList>

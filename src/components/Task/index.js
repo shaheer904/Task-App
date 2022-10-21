@@ -69,7 +69,7 @@ export default class Task extends React.Component {
                     <TextField
                       fullWidth
                       id='outlined-basic'
-                      label='Enter column title'
+                      label='Enter the content'
                       variant='outlined'
                       value={this.state.text}
                       onChange={this.handleText}
