@@ -20,10 +20,20 @@ const style = {
   p: 4,
 }
 class InnerList extends React.PureComponent {
+  handlegood = (taskId, data) => {
+    this.props.setData(taskId, data)
+  }
   render() {
     const { column, taskMap, index } = this.props
     const tasks = column.taskIds.map((taskId) => taskMap[taskId])
-    return <Column column={column} tasks={tasks} index={index} />
+    return (
+      <Column
+        column={column}
+        tasks={tasks}
+        index={index}
+        setData={this.handlegood.bind(this)}
+      />
+    )
   }
 }
 
@@ -114,14 +124,19 @@ class App extends React.Component {
 
       return
     }
-    const left = this.state.initialData.tasks[result.draggableId].position.find(
-      (e) => e === 'left'
-    )
-    const right = this.state.initialData.tasks[
-      result.draggableId
-    ].position.find((e) => e === 'right')
-    console.log(value1, value2)
-    if (right === 'right' && value1 < value2) {
+    const text = this.state.initialData.tasks[result.draggableId].content
+    const position = () => {
+      const firstWord = text.split(' ').shift().toLowerCase()
+      if (firstWord === 'left') {
+        return 'left'
+      } else if (firstWord === 'right') {
+        return 'right'
+      } else {
+        return false
+      }
+    }
+
+    if (position() === 'right' && value1 < value2) {
       // moving from one list to another
       const homeTaskIds = Array.from(home.taskIds)
       homeTaskIds.splice(source.index, 1)
@@ -147,7 +162,7 @@ class App extends React.Component {
       }
       this.setState({ initialData: newState })
     }
-    if (left === 'left' && value1 > value2) {
+    if (position() === 'left' && value1 > value2) {
       // moving from one list to another
       const homeTaskIds = Array.from(home.taskIds)
       homeTaskIds.splice(source.index, 1)
@@ -184,23 +199,16 @@ class App extends React.Component {
     const colName = `column-${number}`
     return colName
   }
+
+  //To aad a new column
   addColumn = () => {
-    // console.log('okay', this.state.initialData.columns)
     let { columns } = this.state.initialData
     //Find the column object last object number
     const lastIndexNum = Object.keys(columns).length - 1
-    // console.log(lastIndexNum)
     //Get the last object key value
     const lastColName = Object.keys(columns)[lastIndexNum]
-    // console.log(lastColName)
     //create the new column key name
     const newCol = this.retnum(lastColName)
-    // console.log(newCol)
-    //new column object
-    const newColObject = Object.assign(columns, {
-      [newCol]: { id: newCol, title: this.state.title, taskIds: [] },
-    })
-    console.log(newColObject)
 
     const newState = {
       ...this.state.initialData,
@@ -212,18 +220,30 @@ class App extends React.Component {
     }
 
     this.setState({ initialData: newState, open: false, title: '' })
-    console.log(newState, 'okay12', this.state.initialData)
   }
 
   handleText = (e) => {
     this.setState({ title: e.target.value })
   }
 
+  //To update the task
+  updateTask = (taskID, text) => {
+    let good = { ...this.state.initialData }
+    good.tasks[taskID].content = text
+    this.setState({
+      ...this.state.initialData.tasks,
+      good,
+    })
+  }
+
   render() {
     return (
       <>
         {console.log('12345', this.state.initialData)}
-        <Button onClick={this.handleOpen} variant='contained'>
+        <Button
+          onClick={() => this.updateTask('as', 'asdf')}
+          variant='contained'
+        >
           Add New Column
         </Button>
 
@@ -270,6 +290,7 @@ class App extends React.Component {
                       column={column}
                       taskMap={this.state.initialData.tasks}
                       index={index}
+                      setData={this.updateTask.bind(this)}
                     />
                   )
                 })}

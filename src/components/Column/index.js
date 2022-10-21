@@ -33,11 +33,20 @@ class InnerList extends React.Component {
   }
   render() {
     return this.props.tasks.map((task, index) => (
-      <Task key={task.id} task={task} index={index} />
+      <Task
+        key={task.id}
+        task={task}
+        index={index}
+        setData={this.props.setData}
+      />
     ))
   }
 }
 export default class Column extends React.Component {
+  handleupdate = (taskId, data) => {
+    console.log('column', taskId, data)
+    this.props.setData(taskId, data)
+  }
   render() {
     return (
       <Draggable draggableId={this.props.column.id} index={this.props.index}>
@@ -57,7 +66,10 @@ export default class Column extends React.Component {
                     {/* {this.props.tasks.map((task, index) => (
                       <Task key={task.id} task={task} index={index} />
                     ))} */}
-                    <InnerList tasks={this.props.tasks} />
+                    <InnerList
+                      tasks={this.props.tasks}
+                      setData={this.handleupdate.bind(this)}
+                    />
                     {provided.placeholder}
                   </TaskList>
                 )}
